@@ -2,11 +2,21 @@
 
 
 
-
+//constructors
 MusicString::MusicString(int openParam, int fretsParam){
-    open = openParam;
+    openNum = openParam;
+    openName = getNoteName(openNum);
     frets = fretsParam;
-    buildMap(open, frets);
+    buildMap(openNum, frets);
+    printBuffer = openName;  //makes a copy. not a reference. 
+}
+
+MusicString::MusicString(std::string openParam, int fretsParam){
+    openName = openParam;
+    openNum = getNoteNum(openName);
+    frets = fretsParam;
+    buildMap(openNum, frets);
+    printBuffer = openName;
 }
 
 MusicString::~MusicString(){
@@ -22,7 +32,7 @@ int MusicString::getFretOctave(int noteNum){
     
     try{
         return stringMap.at(noteNum);
-    }catch(out_of_range e){
+    }catch(std::out_of_range e){
         //cout << "getFret error: " << e.what();
         return -1;
     }
@@ -30,16 +40,6 @@ int MusicString::getFretOctave(int noteNum){
 }
 
 
-int MusicString::getFret(int noteNum){
-    
-    try{
-        return stringMap.at(noteNum);
-    }catch(out_of_range e){
-        //cout << "getFret error: " << e.what();
-        return -1;
-    }
-    
-}
 
 int MusicString::getFret(std::string noteName){
 
@@ -47,31 +47,36 @@ int MusicString::getFret(std::string noteName){
     
     try{
         return stringMap.at(noteNum);
-    }catch(out_of_range e){
+    }catch(std::out_of_range e){
         //cout << "getFret error: " << e.what();
         return -1;
     }
-    
+
 }
 
-int MusicString::getName(){
-    return open;
+std::string MusicString::getOpenName(){
+    return openName;
+}
+
+int MusicString::getOpenNum(){
+    return openNum;
 }
 
 
 
+//static methods 
 
-string MusicString::getNoteName(int noteNum){
-    string name = "";
+std::string MusicString::getNoteName(int noteNum){
+    std::string name = "";
     int note = noteNum%12;
     int octave = noteNum/12;
     name.append(MusicString::notes[note]);
-    name.append(to_string(octave));
+    name.append(std::to_string(octave));
     return name;
 }
 
 
-int MusicString::getNoteNum(string noteName){
+int MusicString::getNoteNum(std::string noteName){
     try{
         int noteNum = 0;
         int octave = stoi(noteName.substr(noteName.length()-1,noteName.length()));  //
@@ -79,8 +84,8 @@ int MusicString::getNoteNum(string noteName){
         int note = MusicString::nameMap.at(noteName.substr(0,noteName.length()-1));
         noteNum += note;
         return noteNum;
-    }catch(out_of_range e ){
-        cout << "error, invalid note name: "  << e.what();
+    }catch(std::out_of_range e ){
+        std::cout << "error, invalid note name: "  << e.what();
         return -1;
     }
 }
